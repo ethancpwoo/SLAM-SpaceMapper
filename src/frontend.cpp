@@ -26,6 +26,35 @@ int main(int argc, char **argv) {
 
     cv::Mat out_img;
     cv::drawKeypoints(img_1, keypnt_1, out_img, cv::Scalar::all(-1), cv::DrawMatchesFlags::DEFAULT);
-    
+    cv::imshow("ORB features", outimg);
 
+    std::vector<DMatch> matches;
+    matcher->match(desc_1, desc_2, matches);
+
+    auto min_max = std::minmax_element(matches.begin(), matches.end());
+    double max_dist = min_max.first->distance;
+    double min_dist = min_max.second->distance;
+
+    std::cout << "Max dist: " << max_dist << std::endl;
+    std::cout << "Min dist: " << min_dist << std::endl;
+
+    std::vector<DMatch> good_matches;
+    for(int i = 0; i < desc_1.rows; i++) {
+        if (matches[i].distance <=  max(2 * min_dist, 30.0)) {
+            good_matches.push_back(matches[i]);
+        }
+    }
+
+    cv::Mat img_match;
+    cv::Mat img_goodmatch;
+
+    cv::drawMatches(img_1, keypnt_1, img_2, keypnt_2, matches, img_match);
+    cv::drawMatches(img_1, keypnt_1, img_2, keypnt_2, goodmatches, img_goodmatch);
+
+    cv::imshow("Matches", img_match);
+    cv::imshow("Good matches", img_goodmatches);
+
+    cv::waitKey(0);
+
+    return 0;
 }
