@@ -28,6 +28,7 @@ int main(int argc, char **argv) {
 
     cv::Mat out_img;
     cv::drawKeypoints(img_1, keypnt_1, out_img, cv::Scalar::all(-1), cv::DrawMatchesFlags::DEFAULT);
+    cv::namedWindow("ORB features", cv::WINDOW_NORMAL);
     cv::imshow("ORB features", out_img);
 
     std::vector<cv::DMatch> matches;
@@ -53,6 +54,8 @@ int main(int argc, char **argv) {
     cv::drawMatches(img_1, keypnt_1, img_2, keypnt_2, matches, img_match);
     cv::drawMatches(img_1, keypnt_1, img_2, keypnt_2, good_matches, img_goodmatches);
 
+    cv::namedWindow("Matches", cv::WINDOW_NORMAL);
+    cv::namedWindow("Good matches", cv::WINDOW_NORMAL);
     cv::imshow("Matches", img_match);
     cv::imshow("Good matches", img_goodmatches);
 

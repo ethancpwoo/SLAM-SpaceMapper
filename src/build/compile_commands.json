@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/ethan/SLAM-SpaceMapper/src/build",
+  "command": "/usr/bin/c++ -isystem /usr/local/include/opencv4 -std=c++11 -g -o CMakeFiles/frontend.dir/frontend.cpp.o -c /home/ethan/SLAM-SpaceMapper/src/frontend.cpp",
+  "file": "/home/ethan/SLAM-SpaceMapper/src/frontend.cpp"
+}
+]
