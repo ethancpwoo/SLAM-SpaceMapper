@@ -1,3 +1,0 @@
-/home/ethan/SLAM-SpaceMapper/src/build/CMakeFiles/frontend.dir
-/home/ethan/SLAM-SpaceMapper/src/build/CMakeFiles/edit_cache.dir
-/home/ethan/SLAM-SpaceMapper/src/build/CMakeFiles/rebuild_cache.dir
