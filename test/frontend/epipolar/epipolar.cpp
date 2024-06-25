@@ -55,8 +55,7 @@ cv::Point2d pixel2cam(const cv::Point2d &p, const cv::Mat &K) {
 void find_feature_matches ( const cv::Mat& img_1, const cv::Mat& img_2,
     std::vector<cv::KeyPoint> &keypoints_1,
     std::vector<cv::KeyPoint> &keypoints_2,
-    std::vector<cv::DMatch> &matches )
-{
+    std::vector<cv::DMatch> &matches ) {
     cv::Mat descriptors_1, descriptors_2;
     cv::Ptr<cv::FeatureDetector> detector = cv::ORB::create();
     cv::Ptr<cv::DescriptorExtractor> descriptor = cv::ORB::create();
