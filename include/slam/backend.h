@@ -19,9 +19,6 @@ class Backend {
         double *point;
         double *points;
         double *cameras;
-        ceres::CostFunction *cost_function;
-        ceres::LossFunction *loss_function;
-        
         
 };
 
