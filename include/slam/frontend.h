@@ -10,6 +10,7 @@ class Frontend {
     public:
         Frontend();
         bool runFrontEnd();
+        bool getMatrices();
         
 
     private:
@@ -21,13 +22,14 @@ class Frontend {
         cv::Mat img1, img2;
         cv::Mat desc1, desc2;
         cv::Mat R, t, E, F;
+        cv::Mat pts_4d;
         std::vector<cv::KeyPoint> keypnt1, keypnt2;
         std::vector<cv::DMatch> matches, good_matches;
         std::vector<cv::Point2f> points1, points2;
         cv::Ptr<cv::FeatureDetector> detector;
         cv::Ptr<cv::DescriptorExtractor> descriptor;
         cv::Ptr<cv::DescriptorMatcher> matcher;
-    
+        
 };
 
 }
