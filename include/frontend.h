@@ -2,30 +2,35 @@
 #ifndef SLAM_FRONTEND_H
 #define SLAM_FRONTEND_H
 
-#include "slam/common.h"
+#include "common.h"
 
 namespace slam {
 
 class Frontend {
     public:
         Frontend();
+        bool setImages(const cv::Mat &img_1, const cv::Mat &img_2);
         bool runFrontEnd();
-        bool getMatrices();
-        
 
     private:
-        bool ORBInit();
         bool ORBGetFeatures();
         bool getPoseEstimation();
         bool Triangulate();
+        cv::Point2f pixel2cam(const cv::Point2d &p, const cv::Mat &K);
+
+        int focal_length;
+        cv::Point2d principal_point;
+        cv::Mat K; 
 
         cv::Mat img1, img2;
         cv::Mat desc1, desc2;
-        cv::Mat R, t, E, F;
+        cv::Mat R, t, H, E, F;
         cv::Mat pts_4d;
         std::vector<cv::KeyPoint> keypnt1, keypnt2;
         std::vector<cv::DMatch> matches, good_matches;
         std::vector<cv::Point2f> points1, points2;
+        std::vector<cv::Point2f> pts_1, pts_2;
+        std::vector<cv::Point3d> points3d;
         cv::Ptr<cv::FeatureDetector> detector;
         cv::Ptr<cv::DescriptorExtractor> descriptor;
         cv::Ptr<cv::DescriptorMatcher> matcher;

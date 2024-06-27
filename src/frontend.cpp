@@ -1,4 +1,4 @@
-#include "slam/frontend.h"
+#include "frontend.h"
 
 namespace slam {
     
@@ -6,6 +6,25 @@ Frontend::Frontend() {
     detector = cv::ORB::create();
     descriptor = cv::ORB::create();
     matcher = cv::DescriptorMatcher::create("BruteForce-Hamming");
+
+    // Temporary test values
+    focal_length = 521;
+    principal_point = cv::Point2d(325.1, 249.7);
+    K = (cv::Mat_<double>(3, 3) << 520.9, 0, 325.1, 0, 521.0, 249.7, 0, 0, 1);
+}
+
+bool Frontend::setImages(const cv::Mat &img_1, const cv::Mat &img_2) {
+    img1 = img_1; 
+    img2 = img_2;
+    assert(img_1.data != nullptr && img_2.data != nullptr);
+    return true;
+}
+
+bool Frontend::runFrontEnd() {
+    ORBGetFeatures();
+    getPoseEstimation(); 
+    Triangulate();
+    return 0;
 }
 
 bool Frontend::ORBGetFeatures() {
@@ -19,31 +38,31 @@ bool Frontend::ORBGetFeatures() {
     double max_dist = min_max.first->distance;
     double min_dist = min_max.second->distance;
 
-    for(int i = 0; i < desc_1.rows; i++) {
+    for(int i = 0; i < desc1.rows; i++) {
         if (matches[i].distance <=  std::max(2 * min_dist, 30.0)) {
             good_matches.push_back(matches[i]);
         }
     }
-
     return true;
 }
 
 bool Frontend::getPoseEstimation() {
     for (int i = 0; i < (int) matches.size(); i++) {
-        points1.push_back(keypoints_1[matches[i].queryIdx].pt);
-        points2.push_back(keypoints_2[matches[i].trainIdx].pt);
+        points1.push_back(keypnt1[matches[i].queryIdx].pt);
+        points2.push_back(keypnt2[matches[i].trainIdx].pt);
     }
     F = cv::findFundamentalMat(points1, points2, cv::FM_8POINT);
     E = cv::findEssentialMat(points1, points2, focal_length, principal_point);
     H = cv::findHomography(points1, points2, cv::RANSAC, 3);
-    cv::recoverPose(essential_matrix, points1, points2, R, t, focal_length, principal_point);
+    cv::recoverPose(E, points1, points2, R, t, focal_length, principal_point);
+    return true;
 }
 
 bool Frontend::Triangulate() {
     //find out what pixel2cam does, 
     for(cv::DMatch m : matches) {
-        pts_1.push_back(pixel2cam(keypoint_1[m.queryIdx].pt, K));
-        pts_2.push_back(pixel2cam(keypoint_2[m.trainIdx].pt, K));
+        pts_1.push_back(pixel2cam(keypnt1[m.queryIdx].pt, K));
+        pts_2.push_back(pixel2cam(keypnt2[m.trainIdx].pt, K));
     }
     cv::Mat T1 = (cv::Mat_<float>(3, 4) << 
         1, 0, 0, 0,
@@ -65,7 +84,18 @@ bool Frontend::Triangulate() {
             x.at<float>(1, 0),
             x.at<float>(2, 0)
         );
-        points.push_back(p);
+        std::cout << "x: " << p.x << "y: " << p.y << "z: " << p.z << std::endl;
+        points3d.push_back(p);
     }
+    return true;
 }
+
+cv::Point2f Frontend::pixel2cam(const cv::Point2d &p, const cv::Mat &K) {
+    return cv::Point2f 
+    (
+        (p.x - K.at<double>(0, 2) / K.at<double>(0, 0)),
+        (p.y - K.at<double>(1, 2) / K.at<double>(1, 1))
+    );
+}
+
 }
