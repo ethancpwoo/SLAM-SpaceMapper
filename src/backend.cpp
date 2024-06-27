@@ -4,38 +4,29 @@
 namespace slam {
 
 Backend::Backend() {
-
+    
 }
 
 Backend::BundleAdjustment() {
-    std::map<unsigned long, g2o::BaseVertex<6, Sophus::SE3d>> vertices;
-    for (auto &keyframe, keyframe) {
-        g2o::BaseVertex<6, g2o::SE3> *vertex = new g2o::BaseVertex<6, g2o::SE3>();
-        vertex->setId();
-        vertex->setEsimate();
-        optimizer.addVertex();
+    typedef g2o::LinearSolverCSparce<g2o::BlockSolver_6_3::PoseMatrixType> LinearSolverType;
 
-        vertices.insert();
+    auto solver = new g2o::OptimizationAlgorithmLevenberg(
+        g2o::make_unique<g2o::BlockSolver_6_3>(
+            g2o::make_unique<LinearSolverType>()
+        )
+    );
+
+    g2o::SparseOptimizer optimizer;
+    optimizer.setAlgorithm(solver);
+
+    std::unordered_map<unsigned long, vertexPose*> vertices;
+    unsigned long max_kf_id = 0; 
+    for (pose : poses) {
+        VertexPose *vertex_pose = new VertexPose();
+        vertex_pose->setId();
+        vertex_pose->setEstimate(pose);
+        optimizer.addVertex(vertex_pose);
     }
-
-    std::map<unsigned long, g2o::BaseVertex<3, Eigen::Matrix<double, 3, 1>>> landmarks;
-
-    // Get Intrinsics and Pose for camera
-
-    int index = 1;
-    double chi2_th = 5.991; // robust kernel
-    std::map;
-    
-    // edges
-
-    for(auto &landmark : landmarks) {
-        auto observations; 
-        for (auto &obs: observations) {
-            auto feat = obs.lock();
-            if (vertice
-        }
-    }
-
 
 
 }

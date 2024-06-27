@@ -10,7 +10,13 @@ Frontend::Frontend() {
     // Temporary test values
     focal_length = 521;
     principal_point = cv::Point2d(325.1, 249.7);
+    // Intrisic matrix 
     K = (cv::Mat_<double>(3, 3) << 520.9, 0, 325.1, 0, 521.0, 249.7, 0, 0, 1);
+}
+
+bool Frontend::setMap(const Map &info_map) {
+    map = info_map;
+    return true;
 }
 
 bool Frontend::setImages(const cv::Mat &img_1, const cv::Mat &img_2) {
@@ -23,8 +29,8 @@ bool Frontend::setImages(const cv::Mat &img_1, const cv::Mat &img_2) {
 bool Frontend::runFrontEnd() {
     ORBGetFeatures();
     getPoseEstimation(); 
-    Triangulate();
-    return 0;
+    triangulate();
+    return true;
 }
 
 bool Frontend::ORBGetFeatures() {
@@ -55,10 +61,16 @@ bool Frontend::getPoseEstimation() {
     E = cv::findEssentialMat(points1, points2, focal_length, principal_point);
     H = cv::findHomography(points1, points2, cv::RANSAC, 3);
     cv::recoverPose(E, points1, points2, R, t, focal_length, principal_point);
+    cv::cv2eigen(R, R_eigen);
+    cv::cv2eigen(t, t_eigen);
+    std::cout << R_eigen.matrix() << std::endl;
+    std::cout << t_eigen.matrix() << std::endl;
+    pose = Sophus::SE3d(R_eigen, t_eigen);
+    std::cout << pose.matrix() << std::endl;
     return true;
 }
 
-bool Frontend::Triangulate() {
+bool Frontend::triangulate() {
     //find out what pixel2cam does, 
     for(cv::DMatch m : matches) {
         pts_1.push_back(pixel2cam(keypnt1[m.queryIdx].pt, K));
@@ -84,7 +96,7 @@ bool Frontend::Triangulate() {
             x.at<float>(1, 0),
             x.at<float>(2, 0)
         );
-        std::cout << "x: " << p.x << "y: " << p.y << "z: " << p.z << std::endl;
+        // std::cout << "x: " << p.x << " y: " << p.y << " z: " << p.z << std::endl;
         points3d.push_back(p);
     }
     return true;

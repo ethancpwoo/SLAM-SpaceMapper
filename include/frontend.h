@@ -3,6 +3,7 @@
 #define SLAM_FRONTEND_H
 
 #include "common.h"
+#include "map.h"
 
 namespace slam {
 
@@ -10,21 +11,28 @@ class Frontend {
     public:
         Frontend();
         bool setImages(const cv::Mat &img_1, const cv::Mat &img_2);
+        bool setMap(const Map &info_map);
         bool runFrontEnd();
 
     private:
         bool ORBGetFeatures();
         bool getPoseEstimation();
-        bool Triangulate();
+        bool triangulate();
         cv::Point2f pixel2cam(const cv::Point2d &p, const cv::Mat &K);
 
+        Map map;
         int focal_length;
         cv::Point2d principal_point;
         cv::Mat K; 
 
         cv::Mat img1, img2;
         cv::Mat desc1, desc2;
+        
         cv::Mat R, t, H, E, F;
+        Eigen::Matrix3d R_eigen;
+        Eigen::Vector3d t_eigen;
+        Sophus::SE3d pose;
+
         cv::Mat pts_4d;
         std::vector<cv::KeyPoint> keypnt1, keypnt2;
         std::vector<cv::DMatch> matches, good_matches;
@@ -39,4 +47,4 @@ class Frontend {
 
 }
 
-#endif  // MYSLAM_FRONTEND_H
+#endif

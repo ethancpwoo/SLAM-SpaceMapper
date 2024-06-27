@@ -17,13 +17,13 @@
 #include <unordered_map>
 #include <vector>
 
-// #include <Eigen/Core>
-// #include <Eigen/Geometry>
+#include <eigen3/Eigen/Core>
 
-// #include <sophus/se3.hpp>
-// #include <sophus/so3.hpp>
+#include <sophus/se3.hpp>
+#include <sophus/so3.hpp>
 
 #include <opencv2/opencv.hpp>
+#include <opencv2/core/eigen.hpp>
 
 // #include <glog/logging.h>
 
