@@ -12,6 +12,7 @@ class Frontend {
         Frontend();
         bool setImages(const cv::Mat &img_1, const cv::Mat &img_2);
         bool setMap(const Map &info_map);
+        bool setCamera();
         bool runFrontEnd();
 
     private:

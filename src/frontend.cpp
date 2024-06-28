@@ -26,6 +26,11 @@ bool Frontend::setImages(const cv::Mat &img_1, const cv::Mat &img_2) {
     return true;
 }
 
+bool Frontend::setCamera(const cv::Mat &k) {
+    K = k;
+    return true;
+}
+
 bool Frontend::runFrontEnd() {
     ORBGetFeatures();
     getPoseEstimation(); 
