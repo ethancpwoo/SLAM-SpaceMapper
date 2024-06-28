@@ -66,7 +66,7 @@ bool Frontend::getPoseEstimation() {
     std::cout << R_eigen.matrix() << std::endl;
     std::cout << t_eigen.matrix() << std::endl;
     pose = Sophus::SE3d(R_eigen, t_eigen);
-    std::cout << pose.matrix() << std::endl;
+    std::cout << pose.log().transpose() << std::endl;
     return true;
 }
 

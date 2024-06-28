@@ -19,25 +19,27 @@
 
 namespace slam {
 
-class VertexPose : public g2o::BaseVertex<6, Sophus::SE3> {
+class VertexSE3 : public g2o::BaseVertex<6, Sophus::SE3> {
 
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
-        
-        virtual void setToOriginImpl() override {
-            _estimate = Sophus::SE3();
-        }
-        
-        virtual void oplusImpl(const double *update) override {
-            Eigen::Matrix<double, 6, 1> update_eigen;
-            update_eigen << update[0], update[1], update[2], update[3], update[4], update[5];
-            _estimate = Sophus::SE3::exp(update_eigen) * _estimate;        
-        }
+        virtual void setToOriginImpl() override;
+        virtual void oplusImpl(const double *update) override;
         virtual bool read(std::istream &in) override { return true; }
-
         virtual bool write(std::ostream &out) const override { return true; }
 
-}
+};
+
+class VertexFeaturePos : public g2o::BaseVertex<3, Eigen::Matrix<double, 3, 1>> {
+    
+    public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
+        virtual void setToOriginImpl() override; 
+        virtual void oplusImpl(const double *update) override;
+        virtual bool read(std::istream &in) override {return true};
+        virtual bool write(std::ostream &out) override {return true};
+
+};
 
 class Backend {
 
@@ -48,7 +50,7 @@ class Backend {
     private:
         
 
-}
+};
     
 }
 
