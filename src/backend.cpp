@@ -12,9 +12,9 @@ bool Backend::setCamera(const cv::Mat &k) {
 }
 
 void Backend::BundleAdjustment(
-    std::vector<Sophus::SE3d> &poses, 
-    std::vector<std::vector<Eigen::Matrix<double, 3, 1>>> &positions,
-    std::vector<std::vector<cv::Point2d>> &pixel_positions) {
+    std::deque<Sophus::SE3d> &poses, 
+    std::deque<std::vector<cv::Point3d>> &positions,
+    std::deque<std::vector<cv::Point2d>> &pixel_positions) {
 
     std::unique_ptr<g2o::BlockSolver_6_3::LinearSolverType> linearSolver(
         new g2o::LinearSolverEigen<g2o::BlockSolver_6_3::PoseMatrixType>()
@@ -27,6 +27,10 @@ void Backend::BundleAdjustment(
     optimizer.setVerbose(true);
 
     std::unordered_map<unsigned long, VertexSE3*> vertices;
+
+    std::cout << poses.size() << std::endl;
+    std::cout << positions.size() << std::endl;
+    std::cout << pixel_positions.size() << std::endl;
 
     for (int i = 0; i < poses.size(); i++) {
         VertexSE3 *vertex_pose = new VertexSE3();
@@ -43,11 +47,13 @@ void Backend::BundleAdjustment(
     
     for (int i = 0; i < positions.size(); i++) {
         for(int j = 0; j < positions[i].size(); j++) {
+            // std::cout << positions[i].size() << std::endl;
+            // std::cout << pixel_positions[i].size() << std::endl;
             VertexFeaturePos *vertex_feature = new VertexFeaturePos;
-            vertex_feature->setEstimate(positions[i][j]);
+            vertex_feature->setEstimate(Eigen::Matrix<double, 3, 1>(positions[i][j].x, positions[i][j].y, positions[i][j].z));
             vertex_feature->setId(poses.size() + j);
             vertex_feature->setMarginalized(true);
-            vertices_features.insert({poses.size() + j, vertex_feature});
+            vertices_features.insert({j, vertex_feature});
 
             EdgeProjection *edge = new EdgeProjection(K, poses[i]);
             edge->setId(j);
@@ -66,11 +72,8 @@ void Backend::BundleAdjustment(
     }
     
     optimizer.initializeOptimization();
-    optimizer.optimize(10);
+    optimizer.optimize(10); //solver and other pointers automatically gets deleted
 
-    delete solver;
-    solver_ptr.release();
-    linearSolver.release();
 }
 
 }

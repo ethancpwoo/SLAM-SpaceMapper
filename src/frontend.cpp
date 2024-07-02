@@ -34,7 +34,7 @@ bool Frontend::setCamera(const cv::Mat &k) {
 bool Frontend::getCurrentBatch(
     std::deque<Sophus::SE3d> &active_poses,
     std::deque<std::vector<cv::Point3d>> &active_positions,
-    std::deque<std::vector<cv::Point2f>> &active_pixel_positions) {
+    std::deque<std::vector<cv::Point2d>> &active_pixel_positions) {
 
     if(active_poses.size() >= 5) {
         active_poses.pop_front();
@@ -125,8 +125,8 @@ bool Frontend::triangulate() {
     return true;
 }
 
-cv::Point2f Frontend::pixel2cam(const cv::Point2d &p, const cv::Mat &K) {
-    return cv::Point2f 
+cv::Point2d Frontend::pixel2cam(const cv::Point2d &p, const cv::Mat &K) {
+    return cv::Point2d 
     (
         (p.x - K.at<double>(0, 2) / K.at<double>(0, 0)),
         (p.y - K.at<double>(1, 2) / K.at<double>(1, 1))

@@ -9,12 +9,15 @@ int main(int argc, char **argv) {
     slam::Backend back_end;
     slam::Map map;
 
-    cv::Mat img_1 = cv::imread(argv[1], cv::IMREAD_COLOR);
-    cv::Mat img_2 = cv::imread(argv[2], cv::IMREAD_COLOR);
+    // cv::Mat img_1 = cv::imread(argv[1], cv::IMREAD_COLOR);
+    // cv::Mat img_2 = cv::imread(argv[2], cv::IMREAD_COLOR);
+
+    cv::Mat img_1 = cv::imread("1.png", cv::IMREAD_COLOR);
+    cv::Mat img_2 = cv::imread("2.png", cv::IMREAD_COLOR);
 
     std::deque<Sophus::SE3d> active_poses;
     std::deque<std::vector<cv::Point3d>> active_positions;
-    std::deque<std::vector<cv::Point2f>> active_pixel_positions;
+    std::deque<std::vector<cv::Point2d>> active_pixel_positions;
 
     front_end.setCamera(k);
     front_end.setMap(map);
@@ -23,6 +26,7 @@ int main(int argc, char **argv) {
     front_end.getCurrentBatch(active_poses, active_positions, active_pixel_positions);
 
     back_end.setCamera(k);
+    back_end.BundleAdjustment(active_poses, active_positions, active_pixel_positions);
 
     return 0;
 }

@@ -110,9 +110,9 @@ class Backend {
     public:
         Backend();
         void BundleAdjustment(
-            std::vector<Sophus::SE3d> &poses, 
-            std::vector<std::vector<Eigen::Matrix<double, 3, 1>>> &positions,
-            std::vector<std::vector<cv::Point2d>> &pixel_positions
+            std::deque<Sophus::SE3d> &poses, 
+            std::deque<std::vector<cv::Point3d>> &positions,
+            std::deque<std::vector<cv::Point2d>> &pixel_positions
         );
         bool setCamera(const cv::Mat &k);
     private:

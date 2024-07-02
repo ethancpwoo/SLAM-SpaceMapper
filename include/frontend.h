@@ -13,7 +13,7 @@ class Frontend {
         bool getCurrentBatch(
             std::deque<Sophus::SE3d> &active_poses,
             std::deque<std::vector<cv::Point3d>> &active_positions,
-            std::deque<std::vector<cv::Point2f>> &active_pixel_positions);
+            std::deque<std::vector<cv::Point2d>> &active_pixel_positions);
         bool setImages(const cv::Mat &img_1, const cv::Mat &img_2);
         bool setMap(const Map &info_map);
         bool setCamera(const cv::Mat &k);
@@ -23,7 +23,7 @@ class Frontend {
         bool ORBGetFeatures();
         bool getPoseEstimation();
         bool triangulate();
-        cv::Point2f pixel2cam(const cv::Point2d &p, const cv::Mat &K);
+        cv::Point2d pixel2cam(const cv::Point2d &p, const cv::Mat &K);
 
         Map map;
         int focal_length;
@@ -41,8 +41,8 @@ class Frontend {
         cv::Mat pts_4d;
         std::vector<cv::KeyPoint> keypnt1, keypnt2;
         std::vector<cv::DMatch> matches, good_matches;
-        std::vector<cv::Point2f> points1, points2;
-        std::vector<cv::Point2f> pts_1, pts_2;
+        std::vector<cv::Point2d> points1, points2;
+        std::vector<cv::Point2d> pts_1, pts_2;
         std::vector<cv::Point3d> points3d;
         cv::Ptr<cv::FeatureDetector> detector;
         cv::Ptr<cv::DescriptorExtractor> descriptor;
