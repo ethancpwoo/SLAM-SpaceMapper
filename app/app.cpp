@@ -25,8 +25,12 @@ int main(int argc, char **argv) {
     front_end.runFrontEnd();
     front_end.getCurrentBatch(active_poses, active_positions, active_pixel_positions);
 
+    std::cout << active_poses[0].matrix() << std::endl;
+
     back_end.setCamera(k);
     back_end.BundleAdjustment(active_poses, active_positions, active_pixel_positions);
 
+    std::cout << active_poses[0].matrix() << std::endl;
+    
     return 0;
 }

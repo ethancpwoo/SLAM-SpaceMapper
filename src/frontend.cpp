@@ -119,7 +119,7 @@ bool Frontend::triangulate() {
             x.at<float>(1, 0),
             x.at<float>(2, 0)
         );
-        // std::cout << "x: " << p.x << " y: " << p.y << " z: " << p.z << std::endl;
+        //std::cout << "x: " << p.x << " y: " << p.y << " z: " << p.z << std::endl;
         points3d.push_back(p);
     }
     return true;

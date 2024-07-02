@@ -26,7 +26,7 @@ void Backend::BundleAdjustment(
     optimizer.setAlgorithm(solver);
     optimizer.setVerbose(true);
 
-    std::unordered_map<unsigned long, VertexSE3*> vertices;
+    std::vector<VertexSE3*> vertices;
 
     std::cout << poses.size() << std::endl;
     std::cout << positions.size() << std::endl;
@@ -37,28 +37,29 @@ void Backend::BundleAdjustment(
         vertex_pose->setId(i);
         vertex_pose->setEstimate(poses[i]);
         optimizer.addVertex(vertex_pose);
-        vertices.insert({i, vertex_pose});
+        vertices.push_back(vertex_pose);
     }
 
-    int index = 1;
+    unsigned long vertex_index = 0;
+    unsigned long edge_index = 0;
     double chi = 5.991;
-    std::unordered_map<unsigned long, VertexFeaturePos*> vertices_features;
+    std::vector<std::vector<VertexFeaturePos*>> vertices_features;
     //std::unordered_map<EdgeProjection *, VertexSE3*> edges_features;
     
     for (int i = 0; i < positions.size(); i++) {
+        std::vector<VertexFeaturePos*> list;
+        vertices_features.push_back(list);
         for(int j = 0; j < positions[i].size(); j++) {
-            // std::cout << positions[i].size() << std::endl;
-            // std::cout << pixel_positions[i].size() << std::endl;
             VertexFeaturePos *vertex_feature = new VertexFeaturePos;
             vertex_feature->setEstimate(Eigen::Matrix<double, 3, 1>(positions[i][j].x, positions[i][j].y, positions[i][j].z));
-            vertex_feature->setId(poses.size() + j);
+            vertex_feature->setId(vertex_index);
             vertex_feature->setMarginalized(true);
-            vertices_features.insert({j, vertex_feature});
+            vertices_features[i].push_back(vertex_feature);
 
             EdgeProjection *edge = new EdgeProjection(K, poses[i]);
-            edge->setId(j);
+            edge->setId(edge_index);
             edge->setVertex(0, vertices.at(i));
-            edge->setVertex(1, vertices_features.at(j));
+            edge->setVertex(1, vertices_features[i][j]);
             edge->setMeasurement(Eigen::Matrix<double, 2, 1>(pixel_positions[i][j].x, pixel_positions[i][j].y)); //set toVec2
             edge->setInformation(Eigen::Matrix<double, 2, 2>::Identity());
             
@@ -68,11 +69,27 @@ void Backend::BundleAdjustment(
 
             //edges_features.insert({edge, });
             optimizer.addEdge(edge);
+            edge_index++;
+            vertex_index++;
         }
     }
     
     optimizer.initializeOptimization();
     optimizer.optimize(10); //solver and other pointers automatically gets deleted
+
+    for(int i = 0; i < vertices.size(); i++) {
+        poses[i] = vertices[i]->estimate();
+    }
+
+    for(int i = 0; i < vertices_features.size(); i++) {
+        for(int j = 0; j < vertices_features[i].size(); j++) {
+            cv::Point3d p(
+                vertices_features[i][j]->estimate()[0],
+                vertices_features[i][j]->estimate()[1],
+                vertices_features[i][j]->estimate()[2]);
+            positions[i][j] = p;
+        }
+    }
 
 }
 
