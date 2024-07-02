@@ -31,6 +31,24 @@ bool Frontend::setCamera(const cv::Mat &k) {
     return true;
 }
 
+bool Frontend::getCurrentBatch(
+    std::deque<Sophus::SE3d> &active_poses,
+    std::deque<std::vector<cv::Point3d>> &active_positions,
+    std::deque<std::vector<cv::Point2f>> &active_pixel_positions) {
+
+    if(active_poses.size() >= 5) {
+        active_poses.pop_front();
+        active_positions.pop_front();
+        active_pixel_positions.pop_front();
+    }
+
+    active_poses.push_back(pose);
+    active_positions.push_back(points3d);
+    active_pixel_positions.push_back(points2);
+
+    return true;
+}
+
 bool Frontend::runFrontEnd() {
     ORBGetFeatures();
     getPoseEstimation(); 

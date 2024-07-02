@@ -10,9 +10,13 @@ namespace slam {
 class Frontend {
     public:
         Frontend();
+        bool getCurrentBatch(
+            std::deque<Sophus::SE3d> &active_poses,
+            std::deque<std::vector<cv::Point3d>> &active_positions,
+            std::deque<std::vector<cv::Point2f>> &active_pixel_positions);
         bool setImages(const cv::Mat &img_1, const cv::Mat &img_2);
         bool setMap(const Map &info_map);
-        bool setCamera();
+        bool setCamera(const cv::Mat &k);
         bool runFrontEnd();
 
     private:

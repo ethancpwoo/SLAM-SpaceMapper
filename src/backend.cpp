@@ -6,13 +6,15 @@ Backend::Backend() {
     
 }
 
-void Backend::setCamera(const cv::Mat &k) {
-    K = k;
+bool Backend::setCamera(const cv::Mat &k) {
+    cv::cv2eigen(k, K);
+    return true;
 }
 
 void Backend::BundleAdjustment(
     std::vector<Sophus::SE3d> &poses, 
-    std::vector<std::vector<Eigen::Matrix<double, 3, 1>>> &positions) {
+    std::vector<std::vector<Eigen::Matrix<double, 3, 1>>> &positions,
+    std::vector<std::vector<cv::Point2d>> &pixel_positions) {
 
     std::unique_ptr<g2o::BlockSolver_6_3::LinearSolverType> linearSolver(
         new g2o::LinearSolverEigen<g2o::BlockSolver_6_3::PoseMatrixType>()
@@ -37,7 +39,7 @@ void Backend::BundleAdjustment(
     int index = 1;
     double chi = 5.991;
     std::unordered_map<unsigned long, VertexFeaturePos*> vertices_features;
-    std::unordered_map<EdgeProjection *, VertexSE3*> edges_features;
+    //std::unordered_map<EdgeProjection *, VertexSE3*> edges_features;
     
     for (int i = 0; i < positions.size(); i++) {
         for(int j = 0; j < positions[i].size(); j++) {
@@ -47,18 +49,18 @@ void Backend::BundleAdjustment(
             vertex_feature->setMarginalized(true);
             vertices_features.insert({poses.size() + j, vertex_feature});
 
-            EdgeProjection *edge = new EdgeProjection();
+            EdgeProjection *edge = new EdgeProjection(K, poses[i]);
             edge->setId(j);
             edge->setVertex(0, vertices.at(i));
             edge->setVertex(1, vertices_features.at(j));
-            edge->setMeasurement(); //set toVec2
-            edge->setInformation(Eigen::Matrix<double, 3, 3>::Identity());
+            edge->setMeasurement(Eigen::Matrix<double, 2, 1>(pixel_positions[i][j].x, pixel_positions[i][j].y)); //set toVec2
+            edge->setInformation(Eigen::Matrix<double, 2, 2>::Identity());
             
             auto rk = new g2o::RobustKernelHuber();
             rk->setDelta(chi);
             edge->setRobustKernel(rk);
 
-            edges_features.insert({edge, poses[i]});
+            //edges_features.insert({edge, });
             optimizer.addEdge(edge);
         }
     }

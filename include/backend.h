@@ -59,15 +59,16 @@ class EdgeProjection : public g2o::BaseBinaryEdge<2, Eigen::Matrix<double, 2, 1>
 
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
-        // EdgeProjection() {
-
-        // }
+        
+        EdgeProjection(const Eigen::Matrix<double, 3, 3> &k, const Sophus::SE3d &cam_ext) : _k(k){
+            _cam_ext = cam_ext;
+        }
         
         virtual void computeError() override {
             const VertexSE3 *v0 = static_cast<VertexSE3 *>(_vertices[0]);
             const VertexFeaturePos *v1 = static_cast<VertexFeaturePos *>(_vertices[1]);
             Sophus::SE3d T = v0->estimate();
-            Eigen::Matrix<double, 3, 1> pos_pixel = _K * (_cam_ext * (T * v1->estimate()));
+            Eigen::Matrix<double, 3, 1> pos_pixel = _k * (_cam_ext * (T * v1->estimate()));
             pos_pixel /= pos_pixel[2];
             _error = _measurement - pos_pixel.head<2>();
         }
@@ -77,11 +78,15 @@ class EdgeProjection : public g2o::BaseBinaryEdge<2, Eigen::Matrix<double, 2, 1>
             const VertexFeaturePos *v1 = static_cast<VertexFeaturePos *>(_vertices[1]);
             Sophus::SE3d T = v0->estimate();
             Eigen::Matrix<double, 3, 1> pos_world = v1->estimate();
-            Eigen::Matrix<double, 3, 1> pos_cam = _cam_ext * T * pw;
+            Eigen::Matrix<double, 3, 1> pos_cam = _cam_ext * T * pos_world;
             // define intrisics
+            double fx = _k(0, 0);
+            double fy = _k(1, 1);
             double X = pos_cam[0];
             double Y = pos_cam[1];
             double Z = pos_cam[2];
+            double Zinv = 1.0 / (Z + 1e-18); 
+            double Zinv2 = Zinv * Zinv;
 
             _jacobianOplusXi << -fx * Zinv, 0, fx * X * Zinv2, fx * X * Y * Zinv2,
                 -fx - fx * X * X * Zinv2, fx * Y * Zinv, 0, -fy * Zinv,
@@ -94,6 +99,10 @@ class EdgeProjection : public g2o::BaseBinaryEdge<2, Eigen::Matrix<double, 2, 1>
         virtual bool read(std::istream &in) override {return true;}
         virtual bool write(std::ostream &out) const override {return true;}
 
+    private:
+        Eigen::Matrix<double, 3, 3> _k;
+        Sophus::SE3d _cam_ext;
+
 };
 
 class Backend {
@@ -102,11 +111,12 @@ class Backend {
         Backend();
         void BundleAdjustment(
             std::vector<Sophus::SE3d> &poses, 
-            std::vector<std::vector<Eigen::Matrix<double, 3, 1>>> &positions
+            std::vector<std::vector<Eigen::Matrix<double, 3, 1>>> &positions,
+            std::vector<std::vector<cv::Point2d>> &pixel_positions
         );
         bool setCamera(const cv::Mat &k);
     private:
-        cv::Mat K;
+        Eigen::Matrix<double, 3, 3> K;
         // pos camera SE3
 
 };
