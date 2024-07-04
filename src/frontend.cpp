@@ -72,15 +72,25 @@ bool Frontend::ORBGetFeatures() {
     descriptor->compute(img2, keypnt2, desc2);
 
     matcher->match(desc1, desc2, matches);
-    auto min_max = std::minmax_element(matches.begin(), matches.end());
+    auto min_max = std::minmax_element(matches.begin(), matches.end(), 
+        [](const cv::DMatch &m1, const cv::DMatch &m2) {return m1.distance < m2.distance; });
     double max_dist = min_max.first->distance;
     double min_dist = min_max.second->distance;
-
+    std::cout << max_dist << std::endl; 
+    std::cout << min_dist << std::endl;
     for(int i = 0; i < desc1.rows; i++) {
-        if (matches[i].distance <=  std::max(2 * min_dist, 30.0)) {
+        if (matches[i].distance <=  min_dist) {
             good_matches.push_back(matches[i]);
         }
     }
+    cv::Mat img_goodmatches;
+
+    cv::drawMatches(img1, keypnt1, img2, keypnt2, matches, img_goodmatches);
+
+    cv::namedWindow("Good matches", cv::WINDOW_NORMAL);
+    cv::imshow("Good matches", img_goodmatches);
+    cv::waitKey(0);
+
     return true;
 }
 
@@ -128,7 +138,7 @@ bool Frontend::triangulate() {
             x.at<float>(1, 0),
             x.at<float>(2, 0)
         );
-        //std::cout << "x: " << p.x << " y: " << p.y << " z: " << p.z << std::endl;
+        std::cout << "x: " << p.x << " y: " << p.y << " z: " << p.z << std::endl;
         points3d.push_back(p);
     }
     return true;

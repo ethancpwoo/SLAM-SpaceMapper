@@ -37,18 +37,23 @@ int main(int argc, char **argv) {
     front_end.setCamera(k);
     front_end.setMap(map);
     back_end.setCamera(k);
+
+    cv::Mat kernel = (cv::Mat_<double>(3, 3) << 0, -1, 0, -1, 5, -1, 0, -1, 0);
+
     for(int i = 0; i < 9; i++) {
 
         img_1 = cv::imread(images[i], cv::IMREAD_COLOR);
         img_2 = cv::imread(images[i + 1], cv::IMREAD_COLOR);
+        cv::filter2D(img_1, img_1, CV_8U, kernel);
+        cv::filter2D(img_2, img_2, CV_8U, kernel);
         front_end.setImages(img_1, img_2);
         front_end.runFrontEnd();
         front_end.getCurrentBatch(active_poses, active_positions, active_pixel_positions);
-        std::cout << active_poses[0].matrix() << std::endl;
+        // std::cout << active_poses[0].matrix() << std::endl;
 
         back_end.BundleAdjustment(active_poses, active_positions, active_pixel_positions);
-        std::cout << active_poses[0].matrix() << std::endl;
-        std::cout << i << std::endl;
+        // std::cout << active_poses[0].matrix() << std::endl;
+        // std::cout << i << std::endl;
 
     }
 
