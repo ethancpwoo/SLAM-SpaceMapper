@@ -7,11 +7,7 @@ Frontend::Frontend() {
     descriptor = cv::ORB::create();
     matcher = cv::DescriptorMatcher::create("BruteForce-Hamming");
 
-    // Temporary test values
-    focal_length = 521;
-    principal_point = cv::Point2d(325.1, 249.7);
-    // Intrisic matrix 
-    K = (cv::Mat_<double>(3, 3) << 520.9, 0, 325.1, 0, 521.0, 249.7, 0, 0, 1);
+    K = cv::Mat_<double>(3, 3);
 }
 
 bool Frontend::setMap(const Map &info_map) {
@@ -28,6 +24,8 @@ bool Frontend::setImages(const cv::Mat &img_1, const cv::Mat &img_2) {
 
 bool Frontend::setCamera(const cv::Mat &k) {
     K = k;
+    focal_length = 517;
+    principal_point = cv::Point2d(318.6, 255.3);
     return true;
 }
 
@@ -50,6 +48,17 @@ bool Frontend::getCurrentBatch(
 }
 
 bool Frontend::runFrontEnd() {
+    
+    keypnt1.clear();
+    keypnt2.clear();
+    matches.clear();
+    good_matches.clear();
+    points1.clear();
+    points2.clear();
+    pts_1.clear();
+    pts_2.clear();
+    points3d.clear();
+
     ORBGetFeatures();
     getPoseEstimation(); 
     triangulate();
@@ -86,10 +95,10 @@ bool Frontend::getPoseEstimation() {
     cv::recoverPose(E, points1, points2, R, t, focal_length, principal_point);
     cv::cv2eigen(R, R_eigen);
     cv::cv2eigen(t, t_eigen);
-    std::cout << R_eigen.matrix() << std::endl;
-    std::cout << t_eigen.matrix() << std::endl;
+    // std::cout << R_eigen.matrix() << std::endl;
+    // std::cout << t_eigen.matrix() << std::endl;
     pose = Sophus::SE3d(R_eigen, t_eigen);
-    std::cout << pose.log().transpose() << std::endl;
+    // std::cout << pose.log().transpose() << std::endl;
     return true;
 }
 

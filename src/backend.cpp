@@ -28,9 +28,9 @@ void Backend::BundleAdjustment(
 
     std::vector<VertexSE3*> vertices;
 
-    std::cout << poses.size() << std::endl;
-    std::cout << positions.size() << std::endl;
-    std::cout << pixel_positions.size() << std::endl;
+    // std::cout << poses.size() << std::endl;
+    // std::cout << positions.size() << std::endl;
+    // std::cout << pixel_positions.size() << std::endl;
 
     for (int i = 0; i < poses.size(); i++) {
         VertexSE3 *vertex_pose = new VertexSE3();
