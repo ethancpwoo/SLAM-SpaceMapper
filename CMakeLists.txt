@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.7...3.29)
-project(frontEnd)
+project(slamspacemapper)
 
 set(CMAKE_CXX_FLAGS "-std=c++17")
 
@@ -14,9 +14,13 @@ include_directories(${Sophus_INCLUDE_DIRS})
 find_package(g2o REQUIRED)
 include_directories(${g2o_INCLUDE_DIRS})
 
+find_package(fbow REQUIRED)
+include_directories(${fbow_INCLUDE_DIRS})
+
 set(THIRD_PARTY_LIBS 
     ${OpenCV_LIBS}
     ${Sophus_LIBS}
+    ${fbow_LIBS}
     g2o_core g2o_stuff g2o_types_sba
     )
 
