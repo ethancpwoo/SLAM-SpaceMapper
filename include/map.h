@@ -10,13 +10,13 @@ class Map {
 
     public:
         Map();
-        // void insertKeyPoint(const Sophus::SE3d &pose, const std::vector<Eigen::Vector3d> &feature);
+        void insertKeyPoint(const Sophus::SE3d pose, const std::vector<Eigen::Vector3d> feature);
+        std::vector<Sophus::SE3d> getMapPose();
+        std::vector<std::vector<Eigen::Vector3d>> getMapFeature();
 
     private:
         std::vector<Sophus::SE3d> poses;
-        std::vector<Sophus::SE3d> active_poses;
         std::vector<std::vector<Eigen::Vector3d>> features;
-        std::vector<std::vector<Eigen::Vector3d>> active_features;
 };
 
 }
