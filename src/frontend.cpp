@@ -24,8 +24,8 @@ bool Frontend::setImages(const cv::Mat &img_1, const cv::Mat &img_2) {
 
 bool Frontend::setCamera(const cv::Mat &k) {
     K = k;
-    focal_length = 517;
-    principal_point = cv::Point2d(318.6, 255.3);
+    focal_length = 615;
+    principal_point = cv::Point2d(320, 240);
     return true;
 }
 
@@ -76,16 +76,17 @@ bool Frontend::ORBGetFeatures() {
         [](const cv::DMatch &m1, const cv::DMatch &m2) {return m1.distance < m2.distance; });
     double max_dist = min_max.first->distance;
     double min_dist = min_max.second->distance;
-    std::cout << max_dist << std::endl; 
-    std::cout << min_dist << std::endl;
+    // std::cout << max_dist << std::endl; 
+    // std::cout << min_dist << std::endl;
     for(int i = 0; i < desc1.rows; i++) {
-        if (matches[i].distance <=  std::max(2 * min_dist, 30.0)) {
+        // std::cout << matches[i].distance << std::endl;
+        if (matches[i].distance <=  20 ) { //std::max(2 * min_dist, 30.0)
             good_matches.push_back(matches[i]);
         }
     }
     cv::Mat img_goodmatches;
 
-    cv::drawMatches(img1, keypnt1, img2, keypnt2, matches, img_goodmatches);
+    cv::drawMatches(img1, keypnt1, img2, keypnt2, good_matches, img_goodmatches);
 
     cv::namedWindow("Good matches", cv::WINDOW_NORMAL);
     cv::imshow("Good matches", img_goodmatches);
@@ -95,10 +96,14 @@ bool Frontend::ORBGetFeatures() {
 }
 
 bool Frontend::getPoseEstimation() {
-    for (int i = 0; i < (int) matches.size(); i++) {
-        points1.push_back(keypnt1[matches[i].queryIdx].pt);
-        points2.push_back(keypnt2[matches[i].trainIdx].pt);
+    // std::cout << good_matches.size() << std::endl;
+    for (int i = 0; i < good_matches.size(); i++) {
+        points1.push_back(keypnt1[good_matches[i].queryIdx].pt);
+        points2.push_back(keypnt2[good_matches[i].trainIdx].pt);
     }
+    // std::cout << points1 << std::endl;
+    // std::cout << points2 << std::endl;
+
     F = cv::findFundamentalMat(points1, points2, cv::FM_8POINT);
     E = cv::findEssentialMat(points1, points2, focal_length, principal_point);
     H = cv::findHomography(points1, points2, cv::RANSAC, 3);
@@ -109,12 +114,13 @@ bool Frontend::getPoseEstimation() {
     // std::cout << t_eigen.matrix() << std::endl;
     pose = Sophus::SE3d(R_eigen, t_eigen);
     // std::cout << pose.log().transpose() << std::endl;
+    std::cout << pose.matrix() << std::endl;
     return true;
 }
 
 bool Frontend::triangulate() {
     //find out what pixel2cam does, 
-    for(cv::DMatch m : matches) {
+    for(cv::DMatch m : good_matches) {
         pts_1.push_back(pixel2cam(keypnt1[m.queryIdx].pt, K));
         pts_2.push_back(pixel2cam(keypnt2[m.trainIdx].pt, K));
     }
@@ -138,7 +144,7 @@ bool Frontend::triangulate() {
             x.at<float>(1, 0),
             x.at<float>(2, 0)
         );
-        std::cout << "x: " << p.x << " y: " << p.y << " z: " << p.z << std::endl;
+        // std::cout << "x: " << p.x << " y: " << p.y << " z: " << p.z << std::endl;
         points3d.push_back(p);
     }
     return true;
