@@ -79,7 +79,7 @@ bool Frontend::ORBGetFeatures() {
     std::cout << max_dist << std::endl; 
     std::cout << min_dist << std::endl;
     for(int i = 0; i < desc1.rows; i++) {
-        if (matches[i].distance <=  min_dist) {
+        if (matches[i].distance <=  std::max(2 * min_dist, 30.0)) {
             good_matches.push_back(matches[i]);
         }
     }
