@@ -5,13 +5,13 @@
 
 int main(int argc, char **argv) {
 
-    std::vector<std::string> images;
-    for(int i = 0; i < 9; i++) {
-        std::string fileName;
-        fileName = std::to_string(i + 1);
-        fileName = "../../dataset/daylight/L_0000" + fileName + ".png";
-        images.push_back(fileName);
-    }
+    // std::vector<std::string> images;
+    // for(int i = 0; i < 9; i++) {
+    //     std::string fileName;
+    //     fileName = std::to_string(i + 1);
+    //     fileName = "../../dataset/daylight/L_0000" + fileName + ".png";
+    //     images.push_back(fileName);
+    // }
 
     // --------------------------------------------------------------------------
     //cv::Mat k = (cv::Mat_<double>(3, 3) << 517.3, 0, 318.6, 0, 516.5, 255.3, 0, 0, 1);
@@ -36,10 +36,12 @@ int main(int argc, char **argv) {
 
     cv::Mat kernel = (cv::Mat_<double>(3, 3) << 0, -1, 0, -1, 5, -1, 0, -1, 0);
 
-    for(int i = 0; i < 9; i++) {
+    // for(int i = 0; i < 9; i++) {
 
-        img_1 = cv::imread(images[i], cv::IMREAD_COLOR);
-        img_2 = cv::imread(images[i + 1], cv::IMREAD_COLOR);
+        img_1 = cv::imread("../../dataset/daylight/L_00001.png", cv::IMREAD_COLOR);
+        img_2 = cv::imread("../../dataset/daylight/L_00015.png", cv::IMREAD_COLOR);
+        // img_1 = cv::imread(images[i], cv::IMREAD_COLOR);
+        // img_2 = cv::imread(images[i + 1], cv::IMREAD_COLOR);
         // cv::filter2D(img_1, img_1, CV_8U, kernel);
         // cv::filter2D(img_2, img_2, CV_8U, kernel);
         front_end.setImages(img_1, img_2);
@@ -51,7 +53,7 @@ int main(int argc, char **argv) {
         // std::cout << active_poses[0].matrix() << std::endl;
         // std::cout << i << std::endl;
 
-    }
+    // }
 
     // back_end.setCamera(k);
     // back_end.BundleAdjustment(active_poses, active_positions, active_pixel_positions);

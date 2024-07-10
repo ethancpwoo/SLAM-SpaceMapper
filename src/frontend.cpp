@@ -108,13 +108,14 @@ bool Frontend::getPoseEstimation() {
     E = cv::findEssentialMat(points1, points2, focal_length, principal_point);
     H = cv::findHomography(points1, points2, cv::RANSAC, 3);
     cv::recoverPose(E, points1, points2, R, t, focal_length, principal_point);
+    // t = 100 * t;
     cv::cv2eigen(R, R_eigen);
     cv::cv2eigen(t, t_eigen);
-    // std::cout << R_eigen.matrix() << std::endl;
-    // std::cout << t_eigen.matrix() << std::endl;
+    std::cout << R_eigen.matrix() << std::endl;
+    std::cout << t_eigen.matrix() << std::endl;
     pose = Sophus::SE3d(R_eigen, t_eigen);
     // std::cout << pose.log().transpose() << std::endl;
-    std::cout << pose.matrix() << std::endl;
+    // std::cout << pose.matrix() << std::endl;
     return true;
 }
 
@@ -124,27 +125,27 @@ bool Frontend::triangulate() {
         pts_1.push_back(pixel2cam(keypnt1[m.queryIdx].pt, K));
         pts_2.push_back(pixel2cam(keypnt2[m.trainIdx].pt, K));
     }
-    cv::Mat T1 = (cv::Mat_<float>(3, 4) << 
+    cv::Mat T1 = (cv::Mat_<double>(3, 4) << 
         1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1, 0);
-    cv::Mat T2 = (cv::Mat_<float>(3, 4) <<
-        R.at<double>(0, 0), R.at<double>(0, 1), R.at<double>(0, 2), R.at<double>(0, 0),
-        R.at<double>(1, 0), R.at<double>(1, 1), R.at<double>(1, 2), R.at<double>(1, 0),
-        R.at<double>(2, 0), R.at<double>(2, 1), R.at<double>(2, 2), R.at<double>(2, 0)
+    cv::Mat T2 = (cv::Mat_<double>(3, 4) <<
+        R.at<double>(0, 0), R.at<double>(0, 1), R.at<double>(0, 2), t.at<double>(0, 0),
+        R.at<double>(1, 0), R.at<double>(1, 1), R.at<double>(1, 2), t.at<double>(1, 0),
+        R.at<double>(2, 0), R.at<double>(2, 1), R.at<double>(2, 2), t.at<double>(2, 0)
     );
 
     cv::triangulatePoints(T1, T2, pts_1, pts_2, pts_4d);
 
     for(int i = 0; i < pts_4d.cols; i++) {
         cv::Mat x = pts_4d.col(i);
-        x /= x.at<float>(3, 0);
+        x /= x.at<double>(3, 0);
         cv::Point3d p(
-            x.at<float>(0, 0),
-            x.at<float>(1, 0),
-            x.at<float>(2, 0)
+            x.at<double>(0, 0),
+            x.at<double>(1, 0),
+            x.at<double>(2, 0)
         );
-        // std::cout << "x: " << p.x << " y: " << p.y << " z: " << p.z << std::endl;
+        std::cout << "x: " << p.x << " y: " << p.y << " z: " << p.z << std::endl;
         points3d.push_back(p);
     }
     return true;
