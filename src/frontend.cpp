@@ -111,8 +111,8 @@ bool Frontend::getPoseEstimation() {
     // t = 100 * t;
     cv::cv2eigen(R, R_eigen);
     cv::cv2eigen(t, t_eigen);
-    std::cout << R_eigen.matrix() << std::endl;
-    std::cout << t_eigen.matrix() << std::endl;
+    // std::cout << R_eigen.matrix() << std::endl;
+    // std::cout << t_eigen.matrix() << std::endl;
     pose = Sophus::SE3d(R_eigen, t_eigen);
     // std::cout << pose.log().transpose() << std::endl;
     // std::cout << pose.matrix() << std::endl;
@@ -145,7 +145,7 @@ bool Frontend::triangulate() {
             x.at<double>(1, 0),
             x.at<double>(2, 0)
         );
-        std::cout << "x: " << p.x << " y: " << p.y << " z: " << p.z << std::endl;
+        // std::cout << "x: " << p.x << " y: " << p.y << " z: " << p.z << std::endl;
         points3d.push_back(p);
     }
     return true;
