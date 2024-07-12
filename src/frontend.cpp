@@ -104,7 +104,7 @@ bool Frontend::getPoseEstimation() {
     // std::cout << points1 << std::endl;
     // std::cout << points2 << std::endl;
 
-    F = cv::findFundamentalMat(points1, points2, cv::FM_8POINT);
+    F = cv::findFundamentalMat(points1, points2, cv::RANSAC);
     E = cv::findEssentialMat(points1, points2, focal_length, principal_point);
     H = cv::findHomography(points1, points2, cv::RANSAC, 3);
     cv::recoverPose(E, points1, points2, R, t, focal_length, principal_point);

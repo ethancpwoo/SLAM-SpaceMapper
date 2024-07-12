@@ -52,18 +52,15 @@ int main(int argc, char **argv) {
         front_end.setImages(img_1, img_2);
         front_end.runFrontEnd();
         front_end.getCurrentBatch(active_poses, active_positions, active_pixel_positions);
-        std::cout << active_poses[0].matrix() << std::endl;
+        // std::cout << "front end" << std::endl << active_poses[0].matrix() << std::endl;
 
         back_end.BundleAdjustment(active_poses, active_positions, active_pixel_positions);
-        std::cout << active_poses[0].matrix() << std::endl;
+        // std::cout << "back end" << std::endl << active_poses[0].matrix() << std::endl;
         // std::cout << images[i] << std::endl;
+        map.insertKeyPoint(active_poses[0], active_positions[0]);
+        std::cout << map.getGlobalPos().matrix() << std::endl;
 
     }
-
-    // back_end.setCamera(k);
-    // back_end.BundleAdjustment(active_poses, active_positions, active_pixel_positions);
-
-    // std::cout << active_poses[0].matrix() << std::endl;
     
     return 0;
 }
