@@ -1,6 +1,7 @@
 #include "backend.h"
 #include "frontend.h"
 #include "map.h"
+#include "viewer.h"
 #include <string>
 
 int main(int argc, char **argv) {
@@ -61,6 +62,10 @@ int main(int argc, char **argv) {
         std::cout << map.getGlobalPos().matrix() << std::endl;
 
     }
+
+    slam::Viewer viewer;
+    viewer.setMap(map);
+    viewer.Visualize();
     
     return 0;
 }

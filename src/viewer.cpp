@@ -1,37 +1,36 @@
-#include "myslam/viewer.h"
+#include "viewer.h"
 
-namespace myslam {
+namespace slam {
 
-Viewer::Viewer() {
-    viewer_thread_ = std::thread(std::bind(&Viewer::ThreadLoop, this));
-}
+// Viewer::Viewer() {
+    // viewer_thread_ = std::thread(std::bind(&Viewer::ThreadLoop, this));
+// }
 
 void Viewer::Close() {
     viewer_running_ = false;
-    viewer_thread_.join();
+    // viewer_thread_.join();
 }
 
-void Viewer::AddCurrentFrame(Frame::Ptr current_frame) {
-    std::unique_lock<std::mutex> lck(viewer_data_mutex_);
-    current_frame_ = current_frame;
+void Viewer::setMap(Map &map){
+    map_ = map;
 }
 
-void Viewer::UpdateMap() {
-    std::unique_lock<std::mutex> lck(viewer_data_mutex_);
-    assert(map_ != nullptr);
-    active_keyframes_ = map_->GetActiveKeyFrames();
-    active_landmarks_ = map_->GetActiveMapPoints();
-    map_updated_ = true;
-}
+// void Viewer::UpdateMap() {
+//     std::unique_lock<std::mutex> lck(viewer_data_mutex_);
+//     assert(map_ != nullptr);
+//     active_keyframes_ = map_->GetActiveKeyFrames();
+//     active_landmarks_ = map_->GetActiveMapPoints();
+//     map_updated_ = true;
+// }
 
-void Viewer::ThreadLoop() {
+void Viewer::Visualize() {
     pangolin::CreateWindowAndBind("MySLAM", 1024, 768);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     pangolin::OpenGlRenderState vis_camera(
-        pangolin::ProjectionMatrix(1024, 768, 400, 400, 512, 384, 0.1, 1000),
+        pangolin::ProjectionMatrix(1024, 768, 615, 615, 320, 240, 0.1, 1000),
         pangolin::ModelViewLookAt(0, -5, -10, 0, 0, 0, 0.0, -1.0, 0.0));
 
     // Add named OpenGL viewport to window and provide 3D Handler
@@ -49,53 +48,68 @@ void Viewer::ThreadLoop() {
         vis_display.Activate(vis_camera);
 
         std::unique_lock<std::mutex> lock(viewer_data_mutex_);
-        if (current_frame_) {
-            DrawFrame(current_frame_, green);
-            FollowCurrentFrame(vis_camera);
+        DrawFrame(current_pose, green);
+        FollowCurrentFrame(vis_camera);
 
-            cv::Mat img = PlotFrameImage();
-            cv::imshow("image", img);
-            cv::waitKey(1);
-        }
+        // cv::Mat img = PlotFrameImage();
+        // cv::imshow("image", img);
+        // cv::waitKey(1);
 
-        if (map_) {
-            DrawMapPoints();
-        }
+        DrawMapPoints();
 
         pangolin::FinishFrame();
-        usleep(5000);
+        // usleep(5000);
     }
-
-    LOG(INFO) << "Stop viewer";
 }
 
-cv::Mat Viewer::PlotFrameImage() {
-    cv::Mat img_out;
-    cv::cvtColor(current_frame_->left_img_, img_out, CV_GRAY2BGR);
-    for (size_t i = 0; i < current_frame_->features_left_.size(); ++i) {
-        if (current_frame_->features_left_[i]->map_point_.lock()) {
-            auto feat = current_frame_->features_left_[i];
-            cv::circle(img_out, feat->position_.pt, 2, cv::Scalar(0, 250, 0),
-                       2);
-        }
-    }
-    return img_out;
-}
+// cv::Mat Viewer::PlotFrameImage() {
+//     cv::Mat img_out;
+//     cv::cvtColor(current_frame_->left_img_, img_out, cv::CV_GRAY2BGR);
+//     for (size_t i = 0; i < current_frame_->features_left_.size(); ++i) {
+//         if (current_frame_->features_left_[i]->map_point_.lock()) {
+//             auto feat = current_frame_->features_left_[i];
+//             cv::circle(img_out, feat->position_.pt, 2, cv::Scalar(0, 250, 0),
+//                        2);
+//         }
+//     }
+//     return img_out;
+// }
 
 void Viewer::FollowCurrentFrame(pangolin::OpenGlRenderState& vis_camera) {
-    SE3 Twc = current_frame_->Pose().inverse();
-    pangolin::OpenGlMatrix m(Twc.matrix());
+    Sophus::SE3d Twc = current_pose.inverse();
+    pangolin::OpenGlMatrix m;
+    auto Twc_mat = Twc.matrix();
+    m.m[0] = Twc_mat(0, 0);
+    m.m[1] = Twc_mat(1, 0);
+    m.m[2] = Twc_mat(2, 0);
+    m.m[3] = Twc_mat(3, 0);
+
+    m.m[4] = Twc_mat(0, 1);
+    m.m[5] = Twc_mat(1, 1);
+    m.m[6] = Twc_mat(2, 1);
+    m.m[7] = Twc_mat(3, 1);
+
+    m.m[8] = Twc_mat(0, 2);
+    m.m[9] = Twc_mat(1, 2);
+    m.m[10] = Twc_mat(2, 2);
+    m.m[11] = Twc_mat(3, 2);
+
+    m.m[12] = Twc_mat(0, 3);
+    m.m[13] = Twc_mat(1, 3);
+    m.m[14] = Twc_mat(2, 3);
+    m.m[15] = Twc_mat(3, 3);
+
     vis_camera.Follow(m, true);
 }
 
-void Viewer::DrawFrame(Frame::Ptr frame, const float* color) {
-    SE3 Twc = frame->Pose().inverse();
+void Viewer::DrawFrame(Sophus::SE3d &pose, const float* color) {
+    Sophus::SE3d Twc = pose.inverse();
     const float sz = 1.0;
     const int line_width = 2.0;
-    const float fx = 400;
-    const float fy = 400;
-    const float cx = 512;
-    const float cy = 384;
+    const float fx = 615;
+    const float fy = 615;
+    const float cx = 320;
+    const float cy = 240;
     const float width = 1080;
     const float height = 768;
 
@@ -138,17 +152,17 @@ void Viewer::DrawFrame(Frame::Ptr frame, const float* color) {
 
 void Viewer::DrawMapPoints() {
     const float red[3] = {1.0, 0, 0};
-    for (auto& kf : active_keyframes_) {
-        DrawFrame(kf.second, red);
+    for (auto& pos : active_positions) {
+        DrawFrame(pos, red);
     }
 
     glPointSize(2);
     glBegin(GL_POINTS);
-    for (auto& landmark : active_landmarks_) {
-        auto pos = landmark.second->Pos();
-        glColor3f(red[0], red[1], red[2]);
-        glVertex3d(pos[0], pos[1], pos[2]);
-    }
+    // for (auto& landmark : active_landmarks) {
+    //     auto pos = landmark;
+    //     glColor3f(red[0], red[1], red[2]);
+    //     glVertex3d(pos[0], pos[1], pos[2]);
+    // }
     glEnd();
 }
 
