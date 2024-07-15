@@ -9,7 +9,7 @@ Before this project and researching SLAM, I wanted to create another "embedded" 
 
 This stack uses Scaled FAST and Oriented BRIEF for its frontend and Sliding Window Bundle Adjustment for its backend. Epipolar geometry and triangulation are used in the frontend to determine the visual odometry and 3D-feature points. 
 
-This project would not have been possible without the slambook[https://github.com/gaoxiang12/slambook2/tree/master], it taught most concepts used in this project. 
+This project would not have been possible without the [slambook](https://github.com/gaoxiang12/slambook2/tree/master), it taught most concepts used in this project. 
 
 ## Prequesites
 
