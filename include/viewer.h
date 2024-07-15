@@ -2,7 +2,12 @@
 #define MYSLAM_VIEWER_H
 
 #include <thread>
-#include <pangolin/pangolin.h>
+
+#include <pangolin/display/display.h>
+#include <pangolin/display/view.h>
+#include <pangolin/handler/handler.h>
+#include <pangolin/gl/gldraw.h>
+
 #include <unistd.h>
 
 #include "common.h"
@@ -20,7 +25,7 @@ class Viewer {
     void Visualize();
     void Close();
     // void AddCurrentFrame(Frame::Ptr current_frame);
-    // void UpdateMap();
+    void UpdateMap();
 
    private:
     

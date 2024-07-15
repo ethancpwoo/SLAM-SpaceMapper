@@ -27,7 +27,7 @@ set(THIRD_PARTY_LIBS
     ${fbow_LIBS}
     ${OpenCV_LIBS}
     ${OPENGL_LIBS}
-    ${Pangolin_LIBS}
+    pango_display
     ${Sophus_LIBS}
     g2o_core g2o_stuff g2o_types_sba
     )

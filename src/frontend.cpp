@@ -86,11 +86,11 @@ bool Frontend::ORBGetFeatures() {
     }
     cv::Mat img_goodmatches;
 
-    cv::drawMatches(img1, keypnt1, img2, keypnt2, good_matches, img_goodmatches);
+    // cv::drawMatches(img1, keypnt1, img2, keypnt2, good_matches, img_goodmatches);
 
-    cv::namedWindow("Good matches", cv::WINDOW_NORMAL);
-    cv::imshow("Good matches", img_goodmatches);
-    cv::waitKey(0);
+    // cv::namedWindow("Good matches", cv::WINDOW_NORMAL);
+    // cv::imshow("Good matches", img_goodmatches);
+    // cv::waitKey(0);
 
     return true;
 }

@@ -152,7 +152,7 @@ void Viewer::DrawFrame(Sophus::SE3d &pose, const float* color) {
 
 void Viewer::DrawMapPoints() {
     const float red[3] = {1.0, 0, 0};
-    for (auto& pos : active_positions) {
+    for (auto& pos : map_.getMapPose()) {
         DrawFrame(pos, red);
     }
 
