@@ -8,7 +8,7 @@ int main(int argc, char **argv) {
 
     // --------------------------------------------------------------------------
     //cv::Mat k = (cv::Mat_<double>(3, 3) << 517.3, 0, 318.6, 0, 516.5, 255.3, 0, 0, 1);
-    cv::Mat k = (cv::Mat_<double>(3, 3) << 615, 0, 320, 0, 615, 240, 0, 0, 1);
+    cv::Mat k = (cv::Mat_<double>(3, 3) << 2714.9, 0, 1296, 0, 2714.29, 972, 0, 0, 1);
     slam::Frontend front_end;
     slam::Backend back_end;
     slam::Map map;

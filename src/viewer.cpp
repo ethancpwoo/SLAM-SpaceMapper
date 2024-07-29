@@ -2,10 +2,6 @@
 
 namespace slam {
 
-// Viewer::Viewer() {
-    // viewer_thread_ = std::thread(std::bind(&Viewer::ThreadLoop, this));
-// }
-
 void Viewer::Close() {
     viewer_running_ = false;
     // viewer_thread_.join();
@@ -161,6 +157,7 @@ void Viewer::DrawMapPoints() {
     // for (auto& landmarks : map_.getMapFeature()) {
     //     auto pos = landmarks;
     //     for(auto& point : pos) {
+    //         std::cout << point << std::endl; 
     //         glColor3f(red[0], red[1], red[2]);
     //         glVertex3d(point.x, point.y, point.z);
     //     }

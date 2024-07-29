@@ -24,8 +24,8 @@ bool Frontend::setImages(const cv::Mat &img_1, const cv::Mat &img_2) {
 
 bool Frontend::setCamera(const cv::Mat &k) {
     K = k;
-    focal_length = 615;
-    principal_point = cv::Point2d(320, 240);
+    focal_length = 2714.29;
+    principal_point = cv::Point2d(1296, 972);
     return true;
 }
 
