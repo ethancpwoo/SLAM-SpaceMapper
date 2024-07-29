@@ -6,15 +6,6 @@
 
 int main(int argc, char **argv) {
 
-    std::vector<std::string> images;
-    for(int i = 0; i < 20; i++) {
-        std::string fileName;
-        fileName = std::to_string((i * 5) + 105);
-        std::string zeros((size_t)(5 - fileName.size()), '0'); 
-        fileName = "../../dataset/daylight/L_" + zeros + fileName + ".png";
-        images.push_back(fileName);
-    }
-
     // --------------------------------------------------------------------------
     //cv::Mat k = (cv::Mat_<double>(3, 3) << 517.3, 0, 318.6, 0, 516.5, 255.3, 0, 0, 1);
     cv::Mat k = (cv::Mat_<double>(3, 3) << 615, 0, 320, 0, 615, 240, 0, 0, 1);
@@ -35,21 +26,27 @@ int main(int argc, char **argv) {
 
     cv::Mat kernel = (cv::Mat_<double>(3, 3) << 0, -1, 0, -1, 5, -1, 0, -1, 0);
 
-    img_1 = cv::imread("../../dataset/daylight/L_00100.png", cv::IMREAD_COLOR);
-    img_2 = cv::imread("../../dataset/daylight/L_00105.png", cv::IMREAD_COLOR);
+    img_1 = cv::imread("../../test_data/test1.jpg", cv::IMREAD_COLOR);
+    img_2 = cv::imread("../../test_data/test2.jpg", cv::IMREAD_COLOR);
     front_end.setImages(img_1, img_2);
     front_end.runFrontEnd();
     front_end.getCurrentBatch(active_poses, active_positions, active_pixel_positions);
 
-    for(int i = 0; i < 19; i++) {
+    for(int i = 2; i < 4; i++) {
         
-        // img_1 = cv::imread("../../dataset/daylight/L_00001.png", cv::IMREAD_COLOR);
-        // img_2 = cv::imread("../../dataset/daylight/L_00015.png", cv::IMREAD_COLOR);
+        std::string img_name_1 = "../../test_data/test";
+        img_name_1.append(std::to_string(i));
+        img_name_1.append(".jpg");
 
-        img_1 = cv::imread(images[i], cv::IMREAD_COLOR);
-        img_2 = cv::imread(images[i + 1], cv::IMREAD_COLOR);
+        std::string img_name_2 = "../../test_data/test";
+        img_name_2.append(std::to_string(i + 1));
+        img_name_2.append(".jpg");
+
+        img_1 = cv::imread(img_name_1, cv::IMREAD_COLOR);
+        img_2 = cv::imread(img_name_2, cv::IMREAD_COLOR);
         // cv::filter2D(img_1, img_1, CV_8U, kernel);
         // cv::filter2D(img_2, img_2, CV_8U, kernel);
+
         front_end.setImages(img_1, img_2);
         front_end.runFrontEnd();
         front_end.getCurrentBatch(active_poses, active_positions, active_pixel_positions);
