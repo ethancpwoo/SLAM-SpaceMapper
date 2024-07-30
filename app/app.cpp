@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
     front_end.runFrontEnd();
     front_end.getCurrentBatch(active_poses, active_positions, active_pixel_positions);
 
-    for(int i = 2; i < 4; i++) {
+    for(int i = 2; i < 18; i++) {
         
         std::string img_name_1 = "../../test_data/test";
         img_name_1.append(std::to_string(i));

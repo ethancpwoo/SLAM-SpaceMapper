@@ -33,3 +33,9 @@ cmake ..
 make
 ./app
 ```
+
+## Encountered Problem Log
+
+After completing the initial algorithm without loop-closure, the algorithm fairly well for visual odometry. However, after trying a dataset, visual odometry is a lot harder than previously thought. Shiny objects and reflective surfaces can pose a problem for cameras and feature detection. I can see the benefits of LIDAR SLAM and more complex CV techinques when using cameras.
+
+I can try to take more pictures and try again. I want to implement the loop closure and optimize the frontend and backend as much as my hardware will allow.
