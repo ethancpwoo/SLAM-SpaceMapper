@@ -17,6 +17,7 @@ class Map {
 
     private:
         std::vector<Sophus::SE3d> poses;
+        std::vector<Sophus::SE3d> global_poses;
         std::vector<std::vector<cv::Point3d>> features;
         Sophus::SE3d global_pos;
 };

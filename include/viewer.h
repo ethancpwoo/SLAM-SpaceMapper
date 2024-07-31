@@ -36,6 +36,7 @@ class Viewer {
     Sophus::SE3d current_pose;
     // Frame::Ptr current_frame_ = nullptr;
     Map map_;
+    
     std::thread viewer_thread_;
     bool viewer_running_ = true;
 
@@ -44,6 +45,7 @@ class Viewer {
     bool map_updated_ = false;
 
     std::mutex viewer_data_mutex_;
+    std::vector<float*> colors;
 };
 }
 

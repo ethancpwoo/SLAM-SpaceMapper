@@ -86,11 +86,11 @@ bool Frontend::ORBGetFeatures() {
     }
     cv::Mat img_goodmatches;
 
-    cv::drawMatches(img1, keypnt1, img2, keypnt2, good_matches, img_goodmatches);
+    // cv::drawMatches(img1, keypnt1, img2, keypnt2, good_matches, img_goodmatches);
 
-    cv::namedWindow("Good matches", cv::WINDOW_NORMAL);
-    cv::imshow("Good matches", img_goodmatches);
-    cv::waitKey(0);
+    // cv::namedWindow("Good matches", cv::WINDOW_NORMAL);
+    // cv::imshow("Good matches", img_goodmatches);
+    // cv::waitKey(0);
 
     return true;
 }
@@ -108,7 +108,7 @@ bool Frontend::getPoseEstimation() {
     E = cv::findEssentialMat(points1, points2, focal_length, principal_point);
     H = cv::findHomography(points1, points2, cv::RANSAC, 3);
     cv::recoverPose(E, points1, points2, R, t, focal_length, principal_point);
-    // t = 100 * t;
+    //t = 5 * t;
     cv::cv2eigen(R, R_eigen);
     cv::cv2eigen(t, t_eigen);
     // std::cout << R_eigen.matrix() << std::endl;

@@ -12,10 +12,12 @@ namespace slam {
         poses.push_back(pose);
         features.push_back(feature);
         global_pos = global_pos * pose.inverse();
+        std::cout << global_pos.matrix() << std::endl;
+        global_poses.push_back(global_pos);
     }
 
     std::vector<Sophus::SE3d> Map::getMapPose(){
-        return poses;
+        return global_poses;
     }
     
     std::vector<std::vector<cv::Point3d>> Map::getMapFeature() {

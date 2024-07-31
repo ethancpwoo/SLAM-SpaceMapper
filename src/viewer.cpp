@@ -1,6 +1,6 @@
 #include "viewer.h"
 
-namespace slam {
+namespace slam { //draws upside down or something mathematically wrong...
 
 void Viewer::Close() {
     viewer_running_ = false;
@@ -36,7 +36,14 @@ void Viewer::Visualize() {
             .SetHandler(new pangolin::Handler3D(vis_camera));
 
     const float blue[3] = {0, 0, 1};
-    const float green[3] = {0, 1, 0};
+    float green[3] = {0, 1, 0};
+
+    for(int i = 0; i < 9; i++) {
+        float* color = new float[3]{0.1f * i, 0, (1.0f/i)}; 
+        colors.push_back(color);
+    }
+
+    current_pose = map_.getGlobalPos();
 
     while (!pangolin::ShouldQuit() && viewer_running_) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -44,7 +51,7 @@ void Viewer::Visualize() {
         vis_display.Activate(vis_camera);
 
         std::unique_lock<std::mutex> lock(viewer_data_mutex_);
-        DrawFrame(current_pose, green);
+        // DrawFrame(current_pose, green);
         FollowCurrentFrame(vis_camera);
 
         // cv::Mat img = PlotFrameImage();
@@ -55,6 +62,10 @@ void Viewer::Visualize() {
 
         pangolin::FinishFrame();
         // usleep(5000);
+    }
+
+    for (auto& color : colors) {
+        delete[] color;
     }
 }
 
@@ -102,10 +113,10 @@ void Viewer::DrawFrame(Sophus::SE3d &pose, const float* color) {
     Sophus::SE3d Twc = pose.inverse();
     const float sz = 1.0;
     const int line_width = 2.0;
-    const float fx = 615;
-    const float fy = 615;
-    const float cx = 320;
-    const float cy = 240;
+    const float fx = 2714.9;
+    const float fy = 2714.9;
+    const float cx = 1296;
+    const float cy = 972;
     const float width = 1080;
     const float height = 768;
 
@@ -114,10 +125,12 @@ void Viewer::DrawFrame(Sophus::SE3d &pose, const float* color) {
     Sophus::Matrix4f m = Twc.matrix().template cast<float>();
     glMultMatrixf((GLfloat*)m.data());
 
-    if (color == nullptr) {
-        glColor3f(1, 0, 0);
-    } else
-        glColor3f(color[0], color[1], color[2]);
+    // if (color == nullptr) {
+    //     glColor3f(1, 0, 0);
+    // } else
+    //     glColor3f(color[0], color[1], color[2]);
+
+    glColor3f(color[0], color[1], color[2]);
 
     glLineWidth(line_width);
     glBegin(GL_LINES);
@@ -148,12 +161,16 @@ void Viewer::DrawFrame(Sophus::SE3d &pose, const float* color) {
 
 void Viewer::DrawMapPoints() {
     const float red[3] = {1.0, 0, 0};
+    int index = 0;
+    
+    int color_index = 0;
     for (auto& pos : map_.getMapPose()) {
-        DrawFrame(pos, red);
+        DrawFrame(pos, colors[color_index]);
+        color_index += 1;
     }
 
-    glPointSize(2);
-    glBegin(GL_POINTS);
+    // glPointSize(2);
+    // glBegin(GL_POINTS);
     // for (auto& landmarks : map_.getMapFeature()) {
     //     auto pos = landmarks;
     //     for(auto& point : pos) {
@@ -162,7 +179,7 @@ void Viewer::DrawMapPoints() {
     //         glVertex3d(point.x, point.y, point.z);
     //     }
     // }
-    glEnd();
+    // glEnd();
 }
 
 }  // namespace myslam

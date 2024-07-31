@@ -26,13 +26,13 @@ int main(int argc, char **argv) {
 
     cv::Mat kernel = (cv::Mat_<double>(3, 3) << 0, -1, 0, -1, 5, -1, 0, -1, 0);
 
-    img_1 = cv::imread("../../test_data/test1.jpg", cv::IMREAD_COLOR);
-    img_2 = cv::imread("../../test_data/test2.jpg", cv::IMREAD_COLOR);
+    img_1 = cv::imread("../../test_data/test4.jpg", cv::IMREAD_COLOR);
+    img_2 = cv::imread("../../test_data/test5.jpg", cv::IMREAD_COLOR);
     front_end.setImages(img_1, img_2);
     front_end.runFrontEnd();
     front_end.getCurrentBatch(active_poses, active_positions, active_pixel_positions);
 
-    for(int i = 2; i < 18; i++) {
+    for(int i = 5; i < 14; i++) {
         
         std::string img_name_1 = "../../test_data/test";
         img_name_1.append(std::to_string(i));
@@ -55,9 +55,16 @@ int main(int argc, char **argv) {
         back_end.BundleAdjustment(active_poses, active_positions, active_pixel_positions);
         // std::cout << "back end" << std::endl << active_poses[0].matrix() << std::endl;
         // std::cout << images[i] << std::endl;
-        map.insertKeyPoint(active_poses[0], active_positions[0]);
-        std::cout << map.getGlobalPos().matrix() << std::endl;
+        if (i > 10) {
+            map.insertKeyPoint(active_poses.front(), active_positions.front());
+        }
 
+    }
+
+    for(int i = 0; i < 5; i++) {
+        map.insertKeyPoint(active_poses.front(), active_positions.front());
+        active_poses.pop_front();
+        active_positions.pop_front(); 
     }
 
     slam::Viewer viewer;
