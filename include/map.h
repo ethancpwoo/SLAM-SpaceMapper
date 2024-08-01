@@ -10,7 +10,7 @@ class Map {
 
     public:
         Map();
-        void insertKeyPoint(const Sophus::SE3d pose, const std::vector<cv::Point3d> feature);
+        void insertKeyPoint(Sophus::SE3d &pose, std::vector<cv::Point3d> &feature);
         std::vector<Sophus::SE3d> getMapPose();
         std::vector<std::vector<cv::Point3d>> getMapFeature();
         Sophus::SE3d getGlobalPos();

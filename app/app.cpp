@@ -1,16 +1,16 @@
 #include "backend.h"
 #include "frontend.h"
+#include "loopclose.h"
 #include "map.h"
 #include "viewer.h"
 #include <string>
 
 int main(int argc, char **argv) {
 
-    // --------------------------------------------------------------------------
-    //cv::Mat k = (cv::Mat_<double>(3, 3) << 517.3, 0, 318.6, 0, 516.5, 255.3, 0, 0, 1);
     cv::Mat k = (cv::Mat_<double>(3, 3) << 2714.9, 0, 1296, 0, 2714.29, 972, 0, 0, 1);
     slam::Frontend front_end;
     slam::Backend back_end;
+    slam::LoopClose loop_closure;
     slam::Map map;
 
     cv::Mat img_1;
@@ -44,8 +44,6 @@ int main(int argc, char **argv) {
 
         img_1 = cv::imread(img_name_1, cv::IMREAD_COLOR);
         img_2 = cv::imread(img_name_2, cv::IMREAD_COLOR);
-        // cv::filter2D(img_1, img_1, CV_8U, kernel);
-        // cv::filter2D(img_2, img_2, CV_8U, kernel);
 
         front_end.setImages(img_1, img_2);
         front_end.runFrontEnd();
@@ -55,16 +53,9 @@ int main(int argc, char **argv) {
         back_end.BundleAdjustment(active_poses, active_positions, active_pixel_positions);
         // std::cout << "back end" << std::endl << active_poses[0].matrix() << std::endl;
         // std::cout << images[i] << std::endl;
-        if (i > 10) {
-            map.insertKeyPoint(active_poses.front(), active_positions.front());
-        }
+     
+        map.insertKeyPoint(active_poses.back(), active_positions.back());
 
-    }
-
-    for(int i = 0; i < 5; i++) {
-        map.insertKeyPoint(active_poses.front(), active_positions.front());
-        active_poses.pop_front();
-        active_positions.pop_front(); 
     }
 
     slam::Viewer viewer;

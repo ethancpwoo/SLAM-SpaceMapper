@@ -1,8 +1,9 @@
 #ifndef LOOPCLOSE_H
 #define LOOPCLOSE_H
 
+#include <fbow/fbow.h>
+
 #include "common.h"
-#include "fbow/fbow.h"
 
 namespace slam {
 
@@ -10,10 +11,12 @@ class LoopClose {
 
     public:
         LoopClose();
-        bool insertDict(const cv::Mat descriptor);
+        int findLoop(const cv::Mat &current_descriptor);
+        void optimize();
 
     private:
-        fbow::Vocabulary* vocab;
+        fbow::Vocabulary vocab;
+        std::vector<fbow::fBow> prev_bows;
 
 };
 

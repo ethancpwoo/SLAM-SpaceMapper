@@ -3,18 +3,23 @@
 namespace slam {
 
 LoopClose::LoopClose() {
-    vocab = new fbow::Vocabulary();
-    // read in images + descriptors
-    // std::vector<cv::Mat> images;
+    vocab.readFromFile("../../test_data/orb_mur.fbow");
 }
 
-bool LoopClose::insertDict(const cv::Mat descriptor) {
+int LoopClose::findLoop(const cv::Mat &current_descriptor) {
+    int index_detected = -1;
+    fbow::fBow current_bow = vocab.transform(current_descriptor);
+    for(int i = 0; i < prev_bows.size(); i++) {
+        if (fbow::fBow::score(current_bow, prev_bows[i]) > 0.8) {
+            index_detected = i;
+            break;
+        }
+    }
+    return index_detected;
+}
 
-    fbow::fBow v1;
-    v1 = vocab->transform(descriptor); 
-    return true;
-    //double score = fbow::fBow::score(v1, v2);
-    // To be honest, not sure if loop closure is needed for now, this seems like once Frontend and Backend work then global positioning is required.
+void LoopClose::optimize() {
+
 
 }
 
