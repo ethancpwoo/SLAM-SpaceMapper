@@ -14,6 +14,7 @@ class Frontend {
             std::deque<Sophus::SE3d> &active_poses,
             std::deque<std::vector<cv::Point3d>> &active_positions,
             std::deque<std::vector<cv::Point2d>> &active_pixel_positions);
+        bool getCurrentDescriptors(cv::Mat &desc1, cv::Mat &desc2);
         bool setImages(const cv::Mat &img_1, const cv::Mat &img_2);
         bool setMap(const Map &info_map);
         bool setCamera(const cv::Mat &k);
@@ -39,6 +40,7 @@ class Frontend {
         Sophus::SE3d pose;
 
         cv::Mat pts_4d;
+        std::vector<cv::Mat> matchedDescriptors1, matchedDescriptors2;
         std::vector<cv::KeyPoint> keypnt1, keypnt2;
         std::vector<cv::DMatch> matches, good_matches;
         std::vector<cv::Point2d> points1, points2;

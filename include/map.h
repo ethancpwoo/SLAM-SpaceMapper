@@ -12,6 +12,7 @@ class Map {
         Map();
         void insertKeyPoint(Sophus::SE3d &pose, std::vector<cv::Point3d> &feature);
         std::vector<Sophus::SE3d> getMapPose();
+        std::vector<Sophus::SE3d> getRelativePose();
         std::vector<std::vector<cv::Point3d>> getMapFeature();
         Sophus::SE3d getGlobalPos();
 

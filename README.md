@@ -52,4 +52,13 @@ Here is my test_data run w/ the data found in /test_data:
   <img src="./img_src/map2.png" />
 </p>
 
-Blue are the first images and the gradient to red is later in time.
+Blue are the first images and the gradient to red is later in time. You can see the map is not the most accurate due to the loss in visual odometry, but it still gets the general idea of where the robot is. 
+
+## Improvements
+
+A monocular slam system, has its limitations but my project specifically can get some improvements. 
+
+1) Homography matrix can be used and compared to epipolar. I thought that it was not worth it the effort, but perhaps can improve accuracy later.
+2) Instead of repeating visual odometry twice per iteration, I could make it more efficient.
+3) Loop closure only optimizes on the point that frame matched with leading in crooked maps. Should include in backend, but this is in hindsight.
+4) For optimization, if this wasn't my first SLAM project, use g2o::slam3d prebuilt classes. 

@@ -47,6 +47,14 @@ bool Frontend::getCurrentBatch(
     return true;
 }
 
+bool Frontend::getCurrentDescriptors(cv::Mat &descriptor1, cv::Mat &descriptor2) {
+
+    descriptor1 = desc1; 
+    descriptor2 = desc2;
+    return true;
+
+}
+
 bool Frontend::runFrontEnd() {
     
     keypnt1.clear();

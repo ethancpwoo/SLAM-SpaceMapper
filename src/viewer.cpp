@@ -1,6 +1,6 @@
 #include "viewer.h"
 
-namespace slam { //draws upside down or something mathematically wrong...
+namespace slam { 
 
 void Viewer::Close() {
     viewer_running_ = false;
@@ -10,15 +10,6 @@ void Viewer::Close() {
 void Viewer::setMap(Map &map){
     map_ = map;
 }
-
-// void Viewer::UpdateMap() {
-//     std::unique_lock<std::mutex> lck(viewer_data_mutex_);
-//     assert(map_ != nullptr);
-//     active_keyframes_ = map_->GetActiveKeyFrames();
-//     active_landmarks_ = map_->GetActiveMapPoints();
-//     map_updated_ = true;
-// }
-
 void Viewer::Visualize() {
     pangolin::CreateWindowAndBind("MySLAM", 1024, 768);
     glEnable(GL_DEPTH_TEST);
@@ -68,19 +59,6 @@ void Viewer::Visualize() {
         delete[] color;
     }
 }
-
-// cv::Mat Viewer::PlotFrameImage() {
-//     cv::Mat img_out;
-//     cv::cvtColor(current_frame_->left_img_, img_out, cv::CV_GRAY2BGR);
-//     for (size_t i = 0; i < current_frame_->features_left_.size(); ++i) {
-//         if (current_frame_->features_left_[i]->map_point_.lock()) {
-//             auto feat = current_frame_->features_left_[i];
-//             cv::circle(img_out, feat->position_.pt, 2, cv::Scalar(0, 250, 0),
-//                        2);
-//         }
-//     }
-//     return img_out;
-// }
 
 void Viewer::FollowCurrentFrame(pangolin::OpenGlRenderState& vis_camera) {
     Sophus::SE3d Twc = current_pose.inverse();

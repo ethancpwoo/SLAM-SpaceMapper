@@ -17,6 +17,7 @@ int main(int argc, char **argv) {
 
     cv::Mat img_1;
     cv::Mat img_2;
+    cv::Mat descriptor1, descriptor2;
 
     std::deque<Sophus::SE3d> active_poses;
     std::deque<std::vector<cv::Point3d>> active_positions;
@@ -25,6 +26,7 @@ int main(int argc, char **argv) {
     front_end.setCamera(k);
     front_end.setMap(map);
     back_end.setCamera(k);
+    loop_closure.setCamera(k);
 
     cv::Mat kernel = (cv::Mat_<double>(3, 3) << 0, -1, 0, -1, 5, -1, 0, -1, 0);
 
@@ -43,20 +45,15 @@ int main(int argc, char **argv) {
 
         front_end.setImages(img_1, img_2);
         front_end.runFrontEnd();
+        front_end.getCurrentDescriptors(descriptor1, descriptor2);
         front_end.getCurrentBatch(active_poses, active_positions, active_pixel_positions);
         // std::cout << "front end" << std::endl << active_poses[0].matrix() << std::endl;
 
         back_end.BundleAdjustment(active_poses, active_positions, active_pixel_positions);
-        std::cout << "back end" << std::endl << active_poses.back().matrix() << std::endl;
-        // std::cout << images[i] << std::endl;
-
-        // std::cout << "iter " << std::endl;
-        // for(int i = 0; i < active_poses.size(); i++) {
-        //     std::cout << active_poses[i].matrix() << std::endl;
-        // }
-
-        // std::cout << i << std::endl;
-        // std::cout << active_poses.size() << std::endl;
+        // std::cout << "back end" << std::endl << active_poses.back().matrix() << std::endl;
+        if (i == 4) loop_closure.findLoop(descriptor1);
+        int loop_index = loop_closure.findLoop(descriptor2);
+        if (loop_index) loop_closure.optimize(active_poses.front(), map.getRelativePose()[loop_index]);
 
         if (active_poses.size() >= 5) init_done = true;
         if (init_done) map.insertKeyPoint(active_poses.front(), active_positions.front());

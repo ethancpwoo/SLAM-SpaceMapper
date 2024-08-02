@@ -22,6 +22,10 @@ namespace slam {
     std::vector<Sophus::SE3d> Map::getMapPose(){
         return global_poses;
     }
+
+    std::vector<Sophus::SE3d> Map::getRelativePose() {
+        return poses; 
+    }
     
     std::vector<std::vector<cv::Point3d>> Map::getMapFeature() {
         return features;
