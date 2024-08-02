@@ -11,10 +11,11 @@ namespace slam {
     void Map::insertKeyPoint(Sophus::SE3d &pose, std::vector<cv::Point3d> &feature) {
         poses.push_back(pose);
         features.push_back(feature);
-        global_pos = global_pos * pose.inverse();
-        for(int i = 0; i < poses.size(); i++) {
-            std::cout << poses[i].matrix() << std::endl;
-        }
+        global_pos = global_pos * pose;
+        // std::cout << global_pos.matrix() << std::endl;
+        // for(int i = 0; i < poses.size(); i++) {
+        //     std::cout << poses[i].matrix() << std::endl;
+        // }
         global_poses.push_back(global_pos);
     }
 

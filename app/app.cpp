@@ -7,6 +7,8 @@
 
 int main(int argc, char **argv) {
 
+    bool init_done = false;
+
     cv::Mat k = (cv::Mat_<double>(3, 3) << 2714.9, 0, 1296, 0, 2714.29, 972, 0, 0, 1);
     slam::Frontend front_end;
     slam::Backend back_end;
@@ -26,13 +28,7 @@ int main(int argc, char **argv) {
 
     cv::Mat kernel = (cv::Mat_<double>(3, 3) << 0, -1, 0, -1, 5, -1, 0, -1, 0);
 
-    img_1 = cv::imread("../../test_data/test4.jpg", cv::IMREAD_COLOR);
-    img_2 = cv::imread("../../test_data/test5.jpg", cv::IMREAD_COLOR);
-    front_end.setImages(img_1, img_2);
-    front_end.runFrontEnd();
-    front_end.getCurrentBatch(active_poses, active_positions, active_pixel_positions);
-
-    for(int i = 5; i < 14; i++) {
+    for(int i = 4; i < 13; i++) {
         
         std::string img_name_1 = "../../test_data/test";
         img_name_1.append(std::to_string(i));
@@ -51,11 +47,26 @@ int main(int argc, char **argv) {
         // std::cout << "front end" << std::endl << active_poses[0].matrix() << std::endl;
 
         back_end.BundleAdjustment(active_poses, active_positions, active_pixel_positions);
-        // std::cout << "back end" << std::endl << active_poses[0].matrix() << std::endl;
+        std::cout << "back end" << std::endl << active_poses.back().matrix() << std::endl;
         // std::cout << images[i] << std::endl;
-     
-        map.insertKeyPoint(active_poses.back(), active_positions.back());
 
+        // std::cout << "iter " << std::endl;
+        // for(int i = 0; i < active_poses.size(); i++) {
+        //     std::cout << active_poses[i].matrix() << std::endl;
+        // }
+
+        // std::cout << i << std::endl;
+        // std::cout << active_poses.size() << std::endl;
+
+        if (active_poses.size() >= 5) init_done = true;
+        if (init_done) map.insertKeyPoint(active_poses.front(), active_positions.front());
+
+    }
+    
+    for(int i = 0; i < active_poses.size(); i++) {
+        map.insertKeyPoint(active_poses.front(), active_positions.front());
+        active_poses.pop_front();
+        active_positions.pop_front();
     }
 
     slam::Viewer viewer;
