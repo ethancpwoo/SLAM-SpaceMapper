@@ -39,3 +39,17 @@ make
 After completing the initial algorithm without loop-closure, the algorithm fairly well for visual odometry. However, after trying a dataset, visual odometry is a lot harder than previously thought. Shiny objects and reflective surfaces can pose a problem for cameras and feature detection. I can see the benefits of LIDAR SLAM and more complex CV techinques when using cameras.
 
 I can try to take more pictures and try again. I want to implement the loop closure and optimize the frontend and backend as much as my hardware will allow.
+
+After a few test_data runs and some Lie Group confusion, I managed to get the visual odometry and visualizer of the map working. I realized that the scale problem is still prevelant and that even if a frame moves by a significant amount, the program/algorithm cannot tell. I found that I am working on a variant of ORB-SLAM and I am encountering the same problems with feature detection and changing lighting. With that, I started reading up on ORB-SLAM2 and ORB-SLAM3 published by ROS and the improvements they made were fairly clever, particularly the use of optimizing the features directly instead of the estimate pose.
+
+Here is my test_data run w/ the data found in /test_data:
+
+<p align="center">
+  <img src="./img_src/map1.png" />
+</p>
+
+<p align="center">
+  <img src="./img_src/map2.png" />
+</p>
+
+Blue are the first images and the gradient to red is later in time.
