@@ -1,6 +1,6 @@
 #include "backend.h"
 #include "frontend.h"
-#include "loopclose.h"
+// #include "loopclose.h"
 #include "map.h"
 #include "viewer.h"
 #include <string>
@@ -12,7 +12,7 @@ int main(int argc, char **argv) {
     cv::Mat k = (cv::Mat_<double>(3, 3) << 2714.9, 0, 1296, 0, 2714.29, 972, 0, 0, 1);
     slam::Frontend front_end;
     slam::Backend back_end;
-    slam::LoopClose loop_closure;
+    // slam::LoopClose loop_closure;
     slam::Map map;
 
     cv::Mat img_1;
@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
     front_end.setCamera(k);
     front_end.setMap(map);
     back_end.setCamera(k);
-    loop_closure.setCamera(k);
+    //loop_closure.setCamera(k);
 
     cv::Mat kernel = (cv::Mat_<double>(3, 3) << 0, -1, 0, -1, 5, -1, 0, -1, 0);
 
@@ -51,9 +51,9 @@ int main(int argc, char **argv) {
 
         back_end.BundleAdjustment(active_poses, active_positions, active_pixel_positions);
         // std::cout << "back end" << std::endl << active_poses.back().matrix() << std::endl;
-        if (i == 4) loop_closure.findLoop(descriptor1);
-        int loop_index = loop_closure.findLoop(descriptor2);
-        if (loop_index) loop_closure.optimize(active_poses.front(), map.getRelativePose()[loop_index]);
+        //if (i == 4) loop_closure.findLoop(descriptor1);
+        //int loop_index = loop_closure.findLoop(descriptor2);
+        //if (loop_index) loop_closure.optimize(active_poses.front(), map.getRelativePose()[loop_index]);
 
         if (active_poses.size() >= 5) init_done = true;
         if (init_done) map.insertKeyPoint(active_poses.front(), active_positions.front());
