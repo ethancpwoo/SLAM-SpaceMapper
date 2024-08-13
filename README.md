@@ -4,7 +4,7 @@
 Using ORB-SLAM, create a monocular camera visual SLAM system on a robot to effectively map a room. Camera feed is processed by Raspberry Pi and transferred to laptop for algorithm processing.
 
 <p align="center">
-  <img src="./img_src/slampic1.heic" />
+  <img src="./img_src/slampic1.png" />
 </p>
 
 ## Status
