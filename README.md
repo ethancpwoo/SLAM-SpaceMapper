@@ -3,13 +3,13 @@
 ## Overview
 Using ORB-SLAM, create a monocular camera visual SLAM system on a robot to effectively map a room. Camera feed is processed by Raspberry Pi and transferred to laptop for algorithm processing.
 
+<p align="center">
+  <img src="./img_src/slampic1.heic" />
+</p>
+
 ## Status
 
-Currently waiting for parts to come in, CADing robot in OnShape and Leetcode in the meantime :D
-
-Hopefully will be able to take some sample pictures for calibration by next week too!
-
-Robot is being 3D printed soon.
+Finished building the robot and is operational. I found that during the actual operation of SLAM, the algorithm works fine but the quality of the camera/visual truly holds the system back. Visual odometry is hardly correct during runtime and with changes in lighting/features, it is incredibly hard to get a decent map with just a single camera. Features on objects are often different and cannot be matched with the algorithm which means the front end holds it up. However, with ideal/highly controlled datasets such as the test_data, it works decently well to produce a map. 
 
 ## Method
 
